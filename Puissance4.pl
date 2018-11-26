@@ -54,25 +54,6 @@ positionHorizontale(Player,0,[_,_,_,X,Player,Player,Player],100):-X\==Player.
 positionHorizontale(Player,0,[_,_,_,_,X,Player,Player],10):-X\==Player.
 position(Player,Move,NewBoard,V):-.
 
-%minimax(0,Board, Flag,Move,Value):-
-%    value(Board,V),
-%    Value is V*Flag.%To delete soon
-%minimax(Depth, Board, Flag, Move, Value):-
-%    Depth>0,
-%    setof(M,(move(Board,M)),Moves), %define move
-%    DepthRecur is Depth-1,
-%    otherFlag is -Flag,
-%    evaluateAndChoose(Moves, Board, DepthRecur, otherFlag, (nil, -1000), (Move,Value)).
-
-
-
-%evaluateAndChoose([],Board,Depth,Flag,Record,Record).
-%evaluateAndChoose([Move|Moves], Board, Depth,Flag, Record, BestMoves):-
-%    move(Move, Board, NewBoard),
-%    minimax(Depth, NewBoard, Flag, MoveX,Value),%MoveX is useless, we don't need to know what to do afterwards
-%    update(Move,Value,Record,Record1),
-%    evaluateAndChoose(Moves,Board,Depth,Flag,Record1,BestMoves).
-
 % Test positionHorizontale
 length(Board,7),positionHorizontale(x,6,Board,V).
 
@@ -140,7 +121,95 @@ positionVerticale(Player,6,[_,_,_,_,_,_,X5,
                             _,_,_,_,_,_,X1,
                             _,_,_,_,_,_,X0],V):-positionVerticale(Player,[X0,X1,X2,X3,X4,X5],V).
 
+positionDiagonale(Player,M,[_,_,_,X3,_,_,_,
+                           _,_,X2,_,_,_,_,
+                           _,X1,_,_,_,_,_,
+                           X0,_,_,_,_,_,_|_],V):-M<4,positionHorizontale(Player,M,[X0,X1,X2,X3,?,?,?],V).
+positionDiagonale(Player,M,[_,_,_,_,X4,_,_,
+                           _,_,_,X3,_,_,_,
+                           _,_,X2,_,_,_,_,
+                           _,X1,_,_,_,_,_,
+                           X0,_,_,_,_,_,_|_],V):-M<5,positionHorizontale(Player,M,[X0,X1,X2,X3,X4,?,?],V).
+positionDiagonale(Player,M,[_,_,_,_,_,X5,_,
+                             _,_,_,_,X4,_,_,
+                             _,_,_,X3,_,_,_,
+                             _,_,X2,_,_,_,_,
+                             _,X1,_,_,_,_,_,
+                             X0,_,_,_,_,_,_|_],V):-M<6,positionHorizontale(Player,M,[X0,X1,X2,X3,X4,X5,?],V).
+positionDiagonale(Player,M,[ _,_,_,_,_,_,X5,
+                             _,_,_,_,_,X4,_,
+                             _,_,_,_,X3,_,_,
+                             _,_,_,X2,_,_,_,
+                             _,_,X1,_,_,_,_,
+                             _,X0,_,_,_,_,_],V):-M>0,positionHorizontale(Player,M,[?,X0,X1,X2,X3,X4,X5],V).
+positionDiagonale(Player,M,[_,_,_,_,_,_,_,
+                             _,_,_,_,_,_,X4,
+                             _,_,_,_,_,X3,_,
+                             _,_,_,_,X2,_,_,
+                             _,_,_,X1,_,_,_,
+                             _,_,X0,_,_,_,_],V):-M>1, positionHorizontale(Player,M,[?,?,X0,X1,X2,X3,X4],V).
+positionDiagonale(Player,M,[_,_,_,_,_,_,_,
+                             _,_,_,_,_,_,_,
+                             _,_,_,_,_,_,X3,
+                             _,_,_,_,_,X2,_,
+                             _,_,_,_,X1,_,_,
+                             _,_,_,X0,_,_,_],V):-M>2,positionHorizontale(Player,M,[?,?,?,X0,X1,X2,X3],V).
+positionDiagonale(Player,M,[_,_,_,X0,_,_,_,
+                             _,_,_,_,X1,_,_,
+                             _,_,_,_,_,X2,_,
+                             _,_,_,_,_,_,X3|_],V):-M>2,positionHorizontale(Player,M,[?,?,?,X0,X1,X2,X3],V).
+positionDiagonale(Player,M,[_,_,X0,_,_,_,_,
+                             _,_,_,X1,_,_,_,
+                             _,_,_,_,X2,_,_,
+                             _,_,_,_,_,X3,_,
+                             _,_,_,_,_,_,X4|_],V):-M>1,positionHorizontale(Player,M,[?,?,X0,X1,X2,X3,X4],V).
+positionDiagonale(Player,M,[_,X0,_,_,_,_,_,
+                             _,_,X1,_,_,_,_,
+                             _,_,_,X2,_,_,_,
+                             _,_,_,_,X3,_,_,
+                             _,_,_,_,_,X4,_,
+                             _,_,_,_,_,_,X5],V):-M>0,positionHorizontale(Player,M,[?,X0,X1,X2,X3,X4,X5],V).
+positionDiagonale(Player,M,[X0,_,_,_,_,_,_,
+                             _,X1,_,_,_,_,_,
+                             _,_,X2,_,_,_,_,
+                             _,_,_,X3,_,_,_,
+                             _,_,_,_,X4,_,_,
+                             _,_,_,_,_,X5,_],V):-M<6,positionHorizontale(Player,M,[X0,X1,X2,X3,X4,X5,?],V).
+positionDiagonale(Player,M,[_,_,_,_,_,_,_,
+                             X0,_,_,_,_,_,_,
+                             _,X1,_,_,_,_,_,
+                             _,_,X2,_,_,_,_,
+                             _,_,_,X3,_,_,_,
+                             _,_,_,_,X4,_,_],V):-M<5,positionHorizontale(Player,M,[X0,X1,X2,X3,X4,?,?],V).
+positionDiagonale(Player,M,[_,_,_,_,_,_,_,
+                             _,_,_,_,_,_,_,
+                             X0,_,_,_,_,_,_,
+                             _,X1,_,_,_,_,_,
+                             _,_,X2,_,_,_,_,
+                             _,_,_,X3,_,_,_],V):- M<4,positionHorizontale(Player,M,[X0,X1,X2,X3,?,?,?],V).
 
+%Test diagonale
+%setof(Board,(length(Board,42),positionDiagonale(x,5,Board,10)),Boards),member(Board,Boards),assert(board(Board)),displayBoard,retract(board(Board)).
+
+
+%minimax(0,Board, Flag,Move,Value):-
+%    value(Board,V),
+%    Value is V*Flag.%To delete soon
+%minimax(Depth, Board, Flag, Move, Value):-
+%    Depth>0,
+%    setof(M,(move(Board,M)),Moves), %define move
+%    DepthRecur is Depth-1,
+%    otherFlag is -Flag,
+%    evaluateAndChoose(Moves, Board, DepthRecur, otherFlag, (nil, -1000), (Move,Value)).
+
+
+
+%evaluateAndChoose([],Board,Depth,Flag,Record,Record).
+%evaluateAndChoose([Move|Moves], Board, Depth,Flag, Record, BestMoves):-
+%    move(Move, Board, NewBoard),
+%    minimax(Depth, NewBoard, Flag, MoveX,Value),%MoveX is useless, we don't need to know what to do afterwards
+%    update(Move,Value,Record,Record1),
+%    evaluateAndChoose(Moves,Board,Depth,Flag,Record1,BestMoves).
 
 
 play(Player):-  write('New turn for:'), writeln(Player),
