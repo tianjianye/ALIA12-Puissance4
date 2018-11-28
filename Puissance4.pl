@@ -1,303 +1,87 @@
 :- dynamic board/1.
 %value(PlayerFlag,Move,NewBoard,V):-
+evaluer(_,[],1).
+evaluer(_,[X|_],1):-var(X).
+evaluer(Player,[X|_],1):-not(var(X)),X\==Player.
+evaluer(Player,[_|L],V):-evaluer(Player,L,V2), V is V2*10.
 
-%-----------------------------------------------ligne horizontale
-%colonne 0
-positionHorizontale(Player,0,[Player,Player,Player,Player,X|_],1000):-X\==Player.
-positionHorizontale(Player,0,[Player,Player,Player,X|_],100):-X\==Player.
-positionHorizontale(Player,0,[Player,Player,X|_],10):-X\==Player.
-%colonne 1
-positionHorizontale(Player,1,[Player,Player,Player,Player,X|_],1000):-X\==Player.
-positionHorizontale(Player,1,[Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,1,[Player,Player,Player,X|_],100):-X\==Player.
-positionHorizontale(Player,1,[X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,1,[Player,Player,X|_],10):-X\==Player.
-positionHorizontale(Player,1,[X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-%colonne2
-positionHorizontale(Player,2,[Player,Player,Player,Player,X|_],1000):-X\==Player.
-positionHorizontale(Player,2,[Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,2,[_,Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,2,[Player,Player,Player,X|_],100):-X\==Player.
-positionHorizontale(Player,2,[_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,2,[_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,2,[_,Y,Player,Player,X|_],10):-X\==Player,Y\==Player.
-positionHorizontale(Player,2,[X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-%colonne3
-positionHorizontale(Player,3,[Player,Player,Player,Player,X|_],1000):-X\==Player.
-positionHorizontale(Player,3,[Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,3,[_,Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,3,[_,_,Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,3,[Y,Player,Player,Player,X|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,3,[_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,3,[_,_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,3,[_,_,Y,Player,Player,X|_],10):-X\==Player,Y\==Player.
-positionHorizontale(Player,3,[_,X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-%colonne 4
-positionHorizontale(Player,4,[Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,4,[_,Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,4,[_,_,Y,Player,Player,Player,Player,X|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,4,[_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,4,[_,_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,4,[_,_,_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,4,[_,_,X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-positionHorizontale(Player,4,[_,_,_,X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-%colonne 5
-positionHorizontale(Player,5,[_,X,Player,Player,Player,Player,Y|_],1000):-X\==Player,Y\==Player.
-positionHorizontale(Player,5,[_,_,X,Player,Player,Player,Player],1000):-X\==Player.
-positionHorizontale(Player,5,[_,_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionHorizontale(Player,5,[_,_,_,X,Player,Player,Player],100):-X\==Player.
-positionHorizontale(Player,5,[_,_,_,X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-positionHorizontale(Player,5,[_,_,_,_,X,Player,Player],10):-X\==Player.
-%colonne 6
-positionHorizontale(Player,0,[_,_,X,Player,Player,Player,Player],1000):-X\==Player.
-positionHorizontale(Player,0,[_,_,_,X,Player,Player,Player],100):-X\==Player.
-positionHorizontale(Player,0,[_,_,_,_,X,Player,Player],10):-X\==Player.
+construireBrancheG(M,M,_,[]).
+construireBrancheG(M,I,[X|L],LG):-I2 is I+1, construireBrancheG(M,I2, L, LG2), append([X],LG2,LG).
+construireBrancheD(_,_,[],[]).
+construireBrancheD(M,I,[_|L],LD):-I=<M,I2 is I+1,construireBrancheD(M,I2, L,LD).
+construireBrancheD(M,I,[X|L],LD):-I>M,I2 is I+1, construireBrancheD(M,I2,L,LD2), append([X],LD2,LD).
 
-positionHorizontale(Player, M, [_,_,_,_,_,_,_|Board],V,N):-N1 is N+1, N\==M,
-    positionHorizontale(Player, M, Board,V,N1).
-positionHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6|_],V,M):-positionHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6],V).
+separerLigne(M,L,LG,LD):-construireBrancheG(M,0,L,LG),construireBrancheD(M,0,L,LD).
 
+evaluerLigne(Player,M,L,V):-separerLigne(M,L,LG,LD),reverse(LG,GL),evaluer(Player,GL,VG),evaluer(Player,LD, VD), V is VG*VD.
+
+positionHorizontale(Player,M,[X0,X1,X2,X3,X4,X5,X6|_],V):-L=[X0,X1,X2,X3,X4,X5,X6],nth0(M,L,Val),not(var(Val)),evaluerLigne(Player,M,L,V).
+positionHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6|Board],V):-L=[X0,X1,X2,X3,X4,X5,X6],nth0(M,L,Val),var(Val), positionHorizontale(Player,M,Board,V).
 % Test positionHorizontale
-length(Board,7),positionHorizontale(x,6,Board,V).
+%length(Board,7),positionHorizontale(x,6,Board,V).
 
-positionVerticale(Player,[Player,Player,X|_],10):-X\==Player.
-positionVerticale(Player,[X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-positionVerticale(Player,[_,X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-positionVerticale(Player,[_,_,X,Player,Player,Y|_],10):-X\==Player,Y\==Player.
-positionVerticale(Player,[_,_,_,X,Player,Player|_],10):-X\==Player.
+construireVerticale(_,[],[]).
+construireVerticale(M,[X0,X1,X2,X3,X4,X5,X6|Board],C):-nth0(M,[X0,X1,X2,X3,X4,X5,X6],Val), not(var(Val)),construireVerticale(M,Board,C2), append([Val],C2,C).
+construireVerticale(M, [X0,X1,X2,X3,X4,X5,X6|Board],C):-nth0(M,[X0,X1,X2,X3,X4,X5,X6],Val),var(Val),construireVerticale(M,Board,C).
+positionVerticale(Player,M,Board,V):-construireVerticale(M,Board,C),evaluer(Player,C,V).
 
-positionVerticale(Player,[Player,Player,Player,X|_],100):-X\==Player.
-positionVerticale(Player,[X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionVerticale(Player,[_,X,Player,Player,Player,Y|_],100):-X\==Player,Y\==Player.
-positionVerticale(Player,[_,_,X,Player,Player,Player|_],100):-X\==Player.
+construireDiagonaleG(_,[],[]).
+construireDiagonaleG(H,[_|_],[]):-H<0.
+construireDiagonaleG(H,[X0,X1,X2,X3,X4,X5,X6|Board],Diag):-not(nth0(H,[X0,X1,X2,X3,X4,X5,X6],_)),H>6,H2 is H-1,construireDiagonaleG(H2,Board,Diag).
+construireDiagonaleG(H,[X0,X1,X2,X3,X4,X5,X6|Board],Diag):-nth0(H,[X0,X1,X2,X3,X4,X5,X6],Val), H2 is H-1,construireDiagonaleG(H2,Board,Diag2),
+    append([Val],Diag2,Diag).
+construireDiagonaleD(_,[],[]).
+construireDiagonaleD(H,[_|_],[]):-H>6.
+construireDiagonaleD(H,[X0,X1,X2,X3,X4,X5,X6|Board],Diag):-not(nth0(H,[X0,X1,X2,X3,X4,X5,X6],_)), H<0,H2 is H+1, construireDiagonaleD(H2,Board,Diag).
+construireDiagonaleD(H,[X0,X1,X2,X3,X4,X5,X6|Board],Diag):-nth0(H,[X0,X1,X2,X3,X4,X5,X6],Val), H2 is H+1,construireDiagonaleD(H2,Board,Diag2),
+    append([Val],Diag2,Diag).
 
-positionVerticale(Player,[Player,Player,Player,Player,X|_],1000):-X\==Player.
-positionVerticale(Player,[X,Player,Player,Player,Player,Y|_],1000):-X\==Player,Y\==Player.
-positionVerticale(Player,[_,X,Player,Player,Player,Player|_],1000):-X\==Player.
+hauteurJeton(_,[],0).
+hauteurJeton(M,[X0,X1,X2,X3,X4,X5,X6|_],0):-nth0(M,[X0,X1,X2,X3,X4,X5,X6],Val),not(var(Val)).
+hauteurJeton(M,[X0,X1,X2,X3,X4,X5,X6|Board],H):-nth0(M,[X0,X1,X2,X3,X4,X5,X6|Board],Val),var(Val),hauteurJeton(M,Board,H2),H is H2+1.
 
-positionVerticale(Player,0,[X5,_,_,_,_,_,_,
-                            X4,_,_,_,_,_,_,
-                            X3,_,_,_,_,_,_,
-                            X2,_,_,_,_,_,_,
-                            X1,_,_,_,_,_,_,
-                            X0,_,_,_,_,_,_],V):-positionVerticale(Player,[X0,X1,X2,X3,X4,X5],V).
+min([X],X).
+min([X|L],M):-min(L,M2),M2<X, M is M2.
+min([X|L],M):-min(L,M2),X<M2, M is X.
 
-positionVerticale(Player,1,[_,X5,_,_,_,_,_,
-                            _,X4,_,_,_,_,_,
-                            _,X3,_,_,_,_,_,
-                            _,X2,_,_,_,_,_,
-                            _,X1,_,_,_,_,_,
-                            _,X0,_,_,_,_,_],V):-positionVerticale(Player,[X0,X1,X2,X3,X4,X5],V).
+indexDiagG(M,H,IC,P):-IC is M+H, Reverse is 7-M,min([Reverse,H],P).
+indexDiagD(M,H,IC,P):-IC is M-H, min([H,M],P).
 
-positionVerticale(Player,2,[_,_,X5,_,_,_,_,
-                            _,_,X4,_,_,_,_,
-                            _,_,X3,_,_,_,_,
-                            _,_,X2,_,_,_,_,
-                            _,_,X1,_,_,_,_,
-                            _,_,X0,_,_,_,_],V):-positionVerticale(Player,[X0,X1,X2,X3,X4,X5],V).
+positionDiagonale(Player,M,Board,V):-hauteurJeton(M,Board,H),
+    indexDiagG(M,H,ICG,PG),construireDiagonaleG(ICG,Board,DiagG),evaluerLigne(Player,PG,DiagG,VG),
+    indexDiagD(M,H,ICD,PD),construireDiagonaleD(ICD,Board,DiagD),evaluerLigne(Player,PD,DiagD,VD),
+    V is VD+VG.
 
-positionVerticale(Player,3,[_,_,_,X5,_,_,_,
-                            _,_,_,X4,_,_,_,
-                            _,_,_,X3,_,_,_,
-                            _,_,_,X2,_,_,_,
-                            _,_,_,X1,_,_,_,
-                            _,_,_,X0,_,_,_],V):-positionVerticale(Player,[X0,X1,X2,X3,X4,X5],V).
-
-positionVerticale(Player,4,[_,_,_,_,X5,_,_,
-                            _,_,_,_,X4,_,_,
-                            _,_,_,_,X3,_,_,
-                            _,_,_,_,X2,_,_,
-                            _,_,_,_,X1,_,_,
-                            _,_,_,_,X0,_,_],V):-positionVerticale(Player,[X0,X1,X2,X3,X4,X5],V).
-
-positionVerticale(Player,5,[_,_,_,_,_,X5,_,
-                            _,_,_,_,_,X4,_,
-                            _,_,_,_,_,X3,_,
-                            _,_,_,_,_,X2,_,
-                            _,_,_,_,_,X1,_,
-                            _,_,_,_,_,X0,_],V):-positionVerticale(Player,[X0,X1,X2,X3,X4,X5],V).
-
-positionVerticale(Player,6,[_,_,_,_,_,_,X5,
-                            _,_,_,_,_,_,X4,
-                            _,_,_,_,_,_,X3,
-                            _,_,_,_,_,_,X2,
-                            _,_,_,_,_,_,X1,
-                            _,_,_,_,_,_,X0],V):-positionVerticale(Player,[X0,X1,X2,X3,X4,X5],V).
-
-positionDiagonale(Player,M,[_,_,_,X3,_,_,_,
-                           _,_,X2,_,_,_,_,
-                           _,X1,_,_,_,_,_,
-                           X0,_,_,_,_,_,_|_],V):-M<4,positionHorizontale(Player,M,[X0,X1,X2,X3,?,?,?],V).
-positionDiagonale(Player,M,[_,_,_,_,X4,_,_,
-                           _,_,_,X3,_,_,_,
-                           _,_,X2,_,_,_,_,
-                           _,X1,_,_,_,_,_,
-                           X0,_,_,_,_,_,_|_],V):-M<5,positionHorizontale(Player,M,[X0,X1,X2,X3,X4,?,?],V).
-positionDiagonale(Player,M,[_,_,_,_,_,X5,_,
-                             _,_,_,_,X4,_,_,
-                             _,_,_,X3,_,_,_,
-                             _,_,X2,_,_,_,_,
-                             _,X1,_,_,_,_,_,
-                             X0,_,_,_,_,_,_|_],V):-M<6,positionHorizontale(Player,M,[X0,X1,X2,X3,X4,X5,?],V).
-positionDiagonale(Player,M,[ _,_,_,_,_,_,X5,
-                             _,_,_,_,_,X4,_,
-                             _,_,_,_,X3,_,_,
-                             _,_,_,X2,_,_,_,
-                             _,_,X1,_,_,_,_,
-                             _,X0,_,_,_,_,_],V):-M>0,positionHorizontale(Player,M,[?,X0,X1,X2,X3,X4,X5],V).
-positionDiagonale(Player,M,[_,_,_,_,_,_,_,
-                             _,_,_,_,_,_,X4,
-                             _,_,_,_,_,X3,_,
-                             _,_,_,_,X2,_,_,
-                             _,_,_,X1,_,_,_,
-                             _,_,X0,_,_,_,_],V):-M>1, positionHorizontale(Player,M,[?,?,X0,X1,X2,X3,X4],V).
-positionDiagonale(Player,M,[_,_,_,_,_,_,_,
-                             _,_,_,_,_,_,_,
-                             _,_,_,_,_,_,X3,
-                             _,_,_,_,_,X2,_,
-                             _,_,_,_,X1,_,_,
-                             _,_,_,X0,_,_,_],V):-M>2,positionHorizontale(Player,M,[?,?,?,X0,X1,X2,X3],V).
-positionDiagonale(Player,M,[_,_,_,X0,_,_,_,
-                             _,_,_,_,X1,_,_,
-                             _,_,_,_,_,X2,_,
-                             _,_,_,_,_,_,X3|_],V):-M>2,positionHorizontale(Player,M,[?,?,?,X0,X1,X2,X3],V).
-positionDiagonale(Player,M,[_,_,X0,_,_,_,_,
-                             _,_,_,X1,_,_,_,
-                             _,_,_,_,X2,_,_,
-                             _,_,_,_,_,X3,_,
-                             _,_,_,_,_,_,X4|_],V):-M>1,positionHorizontale(Player,M,[?,?,X0,X1,X2,X3,X4],V).
-positionDiagonale(Player,M,[_,X0,_,_,_,_,_,
-                             _,_,X1,_,_,_,_,
-                             _,_,_,X2,_,_,_,
-                             _,_,_,_,X3,_,_,
-                             _,_,_,_,_,X4,_,
-                             _,_,_,_,_,_,X5],V):-M>0,positionHorizontale(Player,M,[?,X0,X1,X2,X3,X4,X5],V).
-positionDiagonale(Player,M,[X0,_,_,_,_,_,_,
-                             _,X1,_,_,_,_,_,
-                             _,_,X2,_,_,_,_,
-                             _,_,_,X3,_,_,_,
-                             _,_,_,_,X4,_,_,
-                             _,_,_,_,_,X5,_],V):-M<6,positionHorizontale(Player,M,[X0,X1,X2,X3,X4,X5,?],V).
-positionDiagonale(Player,M,[_,_,_,_,_,_,_,
-                             X0,_,_,_,_,_,_,
-                             _,X1,_,_,_,_,_,
-                             _,_,X2,_,_,_,_,
-                             _,_,_,X3,_,_,_,
-                             _,_,_,_,X4,_,_],V):-M<5,positionHorizontale(Player,M,[X0,X1,X2,X3,X4,?,?],V).
-positionDiagonale(Player,M,[_,_,_,_,_,_,_,
-                             _,_,_,_,_,_,_,
-                             X0,_,_,_,_,_,_,
-                             _,X1,_,_,_,_,_,
-                             _,_,X2,_,_,_,_,
-                             _,_,_,X3,_,_,_],V):- M<4,positionHorizontale(Player,M,[X0,X1,X2,X3,?,?,?],V).
-
+%length(Board,42),nth0(21,Board,x),nth0(15,Board,x),nth0(9,Board,x),nth0(3,Board,x),nth0(29,Board,x),nth0(37,Board,x),positionDiagonale(x,0,Board,V).
 %Test diagonale
 %setof(Board,(length(Board,42),positionDiagonale(x,5,Board,10)),Boards),member(Board,Boards),assert(board(Board)),displayBoard,retract(board(Board)).
 
 %Valuations des distances
 
-valuationDistanceLigne(Player, 0, [Player,Z,X,Y,Player,_,_], 5):-Z\==Player,X\==Player,Y\==Player.
+valeurDistance(2,20).
+valeurDistance(3,10).
+valeurDistance(4,5).
+valeurDistance(X,0):-X<2.
+valeurDistance(X,0):-X>4.
+evaluerDistance(_,_,[],0).
+evaluerDistance(Player,D,[X|L],V):-not(var(X)),X==Player,D2 is D+1,evaluerDistance(Player,D2,L,V2),valeurDistance(D,V3), V is V2+V3.
+evaluerDistance(Player,D,[X|L],V):-(   var(X);not(var(X)),X\==Player),D2 is D+1, evaluerDistance(Player,D2,L,V).
+%Test distance : length(A,7),nth0(0,A,x),nth0(1,A,x),nth0(2,A,x),nth0(3,A,x),nth0(4,A,x),nth0(5,A,x),nth0(6,A,x),trace,evaluerDistance(x,0,A,V).
+evaluerDistanceLigne(Player,M,L,V):-separerLigne(M,L,LG,LD),reverse(LG,GL),evaluerDistance(Player,1,GL,VG),evaluerDistance(Player,1,LD,VD), V is VG +VD.
 
-valuationDistanceLigne(Player, 1, [W,Player,Z,Player,_,_,_], 20):-Z\==Player,W\==Player.
-valuationDistanceLigne(Player, 1, [W,Player,Z,X,Player,_,_], 10):-Z\==Player,X\==Player,W\==Player.
-valuationDistanceLigne(Player, 1, [W,Player,Z,X,Y,Player,_], 5):-Z\==Player,X\==Player,Y\==Player,W\==Player.
+distanceHorizontale(Player,M,[X0,X1,X2,X3,X4,X5,X6|_],V):-L=[X0,X1,X2,X3,X4,X5,X6],nth0(M,L,Val),not(var(Val)),evaluerDistanceLigne(Player,M,L,V).
+distanceHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6|Board],V):-L=[X0,X1,X2,X3,X4,X5,X6],nth0(M,L,Val),var(Val), distanceHorizontale(Player,M,Board,V).
 
-valuationDistanceLigne(Player, 2, [Player,Z,Player,X,Player,_,_], 20):-Z\==Player,X\==Player.
-valuationDistanceLigne(Player, 2, [X,Y,Player,Z,Player,_,_], 20):-Z\==Player,X\==Player,Y\==Player.
-valuationDistanceLigne(Player, 2, [Player,Z,Player,Y,X,_,_], 20):-Z\==Player,X\==Player,Y\==Player.
-valuationDistanceLigne(Player, 2, [Y,W,Player,Z,X,Player,_], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player.
-valuationDistanceLigne(Player, 2, [Q,W,Player,Z,X,Y,Player], 5):-Z\==Player,X\==Player,Y\==Player,W\==Player,Q\==Player.
+%Test de valuation : length(A,7),nth0(0,A,x),nth0(1,A,x),nth0(2,A,x),nth0(3,A,x),nth0(4,A,x),nth0(5,A,x),nth0(6,A,x),evaluerDistanceLigne(x,6,A,V).
 
-valuationDistanceLigne(Player, 3, [_,Player,Z,Player,X,Player,_], 20):-Z\==Player,X\==Player.
-valuationDistanceLigne(Player, 3, [_,X,Y,Player,Z,Player,_], 20):-Z\==Player,X\==Player,Y\==Player.
-valuationDistanceLigne(Player, 3, [_,Player,Z,Player,Y,X,_], 20):-Z\==Player,X\==Player,Y\==Player.
-valuationDistanceLigne(Player, 3, [Player,X,Z,Player,W,Y,Player], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player.
-valuationDistanceLigne(Player, 3, [Player,X,Z,Player,W,Q,Y], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player,Q\==Player.
-valuationDistanceLigne(Player, 3, [Y,Q,W,Player,Z,X,Player], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player,Q\==Player.
+distanceVerticale(Player,M,Board,V):-construireVerticale(M,Board,Col),evaluerDistance(Player,0,Col,V).
 
-valuationDistanceLigne(Player, 4, [_,_,Player,Z,Player,X,Player], 20):-Z\==Player,X\==Player.
-valuationDistanceLigne(Player, 4, [_,_,X,Y,Player,Z,Player], 20):-Z\==Player,X\==Player,Y\==Player.
-valuationDistanceLigne(Player, 4, [_,_,Player,Z,Player,Y,X], 20):-Z\==Player,X\==Player,Y\==Player.
-valuationDistanceLigne(Player, 4, [_,Player,X,Z,Player,W,Y], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player.
-valuationDistanceLigne(Player, 4, [Player,Y,X,Z,Player,W,Q], 5):-Z\==Player,X\==Player,Y\==Player,W\==Player,Q\==Player.
+%Test distance Verticale : length(A,42),nth0(7,A,x),nth0(14,A,x),nth0(21,A,o),nth0(28,A,x),nth0(35,A,x),distanceVerticale(x,0,A,V).
 
-valuationDistanceLigne(Player, 5, [_,_,_,Player,Z,Player,W], 20):-Z\==Player,W\==Player.
-valuationDistanceLigne(Player, 5, [_,_,Player,Z,X,Player,W], 10):-Z\==Player,X\==Player,W\==Player.
-valuationDistanceLigne(Player, 5, [_,Player,Z,X,Y,Player,W], 5):-Z\==Player,X\==Player,Y\==Player,W\==Player.
+evaluerDistanceDiagonaleG(Player,M,Board,V):-hauteurJeton(M,Board,H),indexDiagG(M,H,ICG,PG),construireDiagonaleG(ICG,Board,Diag),evaluerDistanceLigne(Player,PG,Diag,V).
+evaluerDistanceDiagonaleD(Player,M,Board,V):-hauteurJeton(M,Board,H),indexDiagD(M,H,ICD,PD),construireDiagonaleD(ICD,Board,Diag),evaluerDistanceLigne(Player,PD,Diag,V).
 
-valuationDistanceLigne(Player, 6, [_,_,_,_,Player,Z,Player], 20):-Z\==Player.
-valuationDistanceLigne(Player, 6, [_,_,_,Player,Z,X,Player], 10):-Z\==Player,X\==Player.
-valuationDistanceLigne(Player, 6, [_,_,Player,Z,X,Y,Player], 5):-Z\==Player,X\==Player,Y\==Player.
-
-valuationDistanceLigne(Player, M, L, [X0,X1,X2,X3,X4,X5,X6|_],L, V):-
-    valuationDistanceLigne(Player, M, [X0,X1,X2,X3,X4,X5,X6], V).
-
-valuationDistanceLigne(Player, M, L, [_,_,_,_,_,_,_|Board],N, V):-N1 is N+1, L\==N,
-    valuationDistanceLigne(Player, M, L, Board, N1, V).
-
-
-valuationDistanceColonne(Player,0,[_,_,_,Player,Z,Player],20):-Z\==Player.
-valuationDistanceColonne(Player,0,[_,_,Player,X,Z,Player],10):-Z\==Player,X\==Player.
-valuationDistanceColonne(Player,0,[_,Player,Y,X,Z,Player],5):-Z\==Player,X\==Player,Y\==Player.
-
-valuationDistanceColonne(Player,1,[_,_,Player,Z,Player,_],20):-Z\==Player.
-valuationDistanceColonne(Player,1,[_,Player,X,Z,Player,_],10):-Z\==Player,X\==Player.
-valuationDistanceColonne(Player,1,[Player,Y,X,Z,Player,_],5):-Z\==Player,X\==Player,Y\==Player.
-
-valuationDistanceColonne(Player,2,[_,Player,Z,Player,_,_],20):-Z\==Player.
-valuationDistanceColonne(Player,2,[Player,X,Z,Player,_,_],10):-Z\==Player,X\==Player.
-
-valuationDistanceColonne(Player,3,[Player,Z,Player,_,_,_],20):-Z\==Player.
-
-valuationDistanceColonne(Player,0,L,[X5,_,_,_,_,_,_,
-                                     X4,_,_,_,_,_,_,
-                                     X3,_,_,_,_,_,_,
-                                     X2,_,_,_,_,_,_,
-                                     X1,_,_,_,_,_,_,
-                                     X0,_,_,_,_,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
-
-valuationDistanceColonne(Player,1,L,[_,X5,_,_,_,_,_,
-                                     _,X4,_,_,_,_,_,
-                                     _,X3,_,_,_,_,_,
-                                     _,X2,_,_,_,_,_,
-                                     _,X1,_,_,_,_,_,
-                                     _,X0,_,_,_,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
-
-valuationDistanceColonne(Player,2,L,[_,_,X5,_,_,_,_,
-                                     _,_,X4,_,_,_,_,
-                                     _,_,X3,_,_,_,_,
-                                     _,_,X2,_,_,_,_,
-                                     _,_,X1,_,_,_,_,
-                                     _,_,X0,_,_,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
-
-valuationDistanceColonne(Player,3,L,[_,_,_,X5,_,_,_,
-                                     _,_,_,X4,_,_,_,
-                                     _,_,_,X3,_,_,_,
-                                     _,_,_,X2,_,_,_,
-                                     _,_,_,X1,_,_,_,
-                                     _,_,_,X0,_,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
-
-valuationDistanceColonne(Player,4,L,[_,_,_,_,X5,_,_,
-                                     _,_,_,_,X4,_,_,
-                                     _,_,_,_,X3,_,_,
-                                     _,_,_,_,X2,_,_,
-                                     _,_,_,_,X1,_,_,
-                                     _,_,_,_,X0,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
-
-valuationDistanceColonne(Player,5,L,[_,_,_,_,_,X5,_,
-                                     _,_,_,_,_,X4,_,
-                                     _,_,_,_,_,X3,_,
-                                     _,_,_,_,_,X2,_,
-                                     _,_,_,_,_,X1,_,
-                                     _,_,_,_,_,X0,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
-
-valuationDistanceColonne(Player,6,L,[_,_,_,_,_,_,X5,
-                                     _,_,_,_,_,_,X4,
-                                     _,_,_,_,_,_,X3,
-                                     _,_,_,_,_,_,X2,
-                                     _,_,_,_,_,_,X1,
-                                     _,_,_,_,_,_,X0],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
-
+distanceDiagonale(Player,M,Board,V):-.evaluerDistanceDiagonaleG(Player,M,Board,VG),evaluerDistanceDiagonaleD(Player,M,Board,VD),V is VG+VD.
 
 %minimax(0,Board, Flag,Move,Value):-
 %    value(Board,V),
@@ -341,7 +125,7 @@ playMove(Board,Move,NewBoard,Player) :- Board=NewBoard,
     Index>=0,
     nth0(Index,NewBoard,Player).
 
-playMove(Moves,[X0,X1,X2,X3,X4,X5,X6|_]) :-setof(I,nth0(I,[X0,X1,X2,X3,X4,X5,X6],variable),Moves).
+playMove(Moves,[X0,X1,X2,X3,X4,X5,X6|_]) :-findall(I,nth0(I,[X0,X1,X2,X3,X4,X5,X6],variable),Moves).
 
 %%%% Remove old board/save new on in the knowledge base
 applyIt(Board,NewBoard) :- retract(board(Board)), assert(board(NewBoard)).
