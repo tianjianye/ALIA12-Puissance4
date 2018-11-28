@@ -52,7 +52,10 @@ positionHorizontale(Player,5,[_,_,_,_,X,Player,Player],10):-X\==Player.
 positionHorizontale(Player,0,[_,_,X,Player,Player,Player,Player],1000):-X\==Player.
 positionHorizontale(Player,0,[_,_,_,X,Player,Player,Player],100):-X\==Player.
 positionHorizontale(Player,0,[_,_,_,_,X,Player,Player],10):-X\==Player.
-position(Player,Move,NewBoard,V):-.
+
+positionHorizontale(Player, M, [_,_,_,_,_,_,_|Board],V,N):-N1 is N+1, N\==M,
+    positionHorizontale(Player, M, Board,V,N1).
+positionHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6|_],V,M):-positionHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6],V).
 
 % Test positionHorizontale
 length(Board,7),positionHorizontale(x,6,Board,V).
@@ -190,6 +193,110 @@ positionDiagonale(Player,M,[_,_,_,_,_,_,_,
 
 %Test diagonale
 %setof(Board,(length(Board,42),positionDiagonale(x,5,Board,10)),Boards),member(Board,Boards),assert(board(Board)),displayBoard,retract(board(Board)).
+
+%Valuations des distances
+
+valuationDistanceLigne(Player, 0, [Player,Z,X,Y,Player,_,_], 5):-Z\==Player,X\==Player,Y\==Player.
+
+valuationDistanceLigne(Player, 1, [W,Player,Z,Player,_,_,_], 20):-Z\==Player,W\==Player.
+valuationDistanceLigne(Player, 1, [W,Player,Z,X,Player,_,_], 10):-Z\==Player,X\==Player,W\==Player.
+valuationDistanceLigne(Player, 1, [W,Player,Z,X,Y,Player,_], 5):-Z\==Player,X\==Player,Y\==Player,W\==Player.
+
+valuationDistanceLigne(Player, 2, [Player,Z,Player,X,Player,_,_], 20):-Z\==Player,X\==Player.
+valuationDistanceLigne(Player, 2, [X,Y,Player,Z,Player,_,_], 20):-Z\==Player,X\==Player,Y\==Player.
+valuationDistanceLigne(Player, 2, [Player,Z,Player,Y,X,_,_], 20):-Z\==Player,X\==Player,Y\==Player.
+valuationDistanceLigne(Player, 2, [Y,W,Player,Z,X,Player,_], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player.
+valuationDistanceLigne(Player, 2, [Q,W,Player,Z,X,Y,Player], 5):-Z\==Player,X\==Player,Y\==Player,W\==Player,Q\==Player.
+
+valuationDistanceLigne(Player, 3, [_,Player,Z,Player,X,Player,_], 20):-Z\==Player,X\==Player.
+valuationDistanceLigne(Player, 3, [_,X,Y,Player,Z,Player,_], 20):-Z\==Player,X\==Player,Y\==Player.
+valuationDistanceLigne(Player, 3, [_,Player,Z,Player,Y,X,_], 20):-Z\==Player,X\==Player,Y\==Player.
+valuationDistanceLigne(Player, 3, [Player,X,Z,Player,W,Y,Player], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player.
+valuationDistanceLigne(Player, 3, [Player,X,Z,Player,W,Q,Y], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player,Q\==Player.
+valuationDistanceLigne(Player, 3, [Y,Q,W,Player,Z,X,Player], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player,Q\==Player.
+
+valuationDistanceLigne(Player, 4, [_,_,Player,Z,Player,X,Player], 20):-Z\==Player,X\==Player.
+valuationDistanceLigne(Player, 4, [_,_,X,Y,Player,Z,Player], 20):-Z\==Player,X\==Player,Y\==Player.
+valuationDistanceLigne(Player, 4, [_,_,Player,Z,Player,Y,X], 20):-Z\==Player,X\==Player,Y\==Player.
+valuationDistanceLigne(Player, 4, [_,Player,X,Z,Player,W,Y], 10):-Z\==Player,X\==Player,Y\==Player,W\==Player.
+valuationDistanceLigne(Player, 4, [Player,Y,X,Z,Player,W,Q], 5):-Z\==Player,X\==Player,Y\==Player,W\==Player,Q\==Player.
+
+valuationDistanceLigne(Player, 5, [_,_,_,Player,Z,Player,W], 20):-Z\==Player,W\==Player.
+valuationDistanceLigne(Player, 5, [_,_,Player,Z,X,Player,W], 10):-Z\==Player,X\==Player,W\==Player.
+valuationDistanceLigne(Player, 5, [_,Player,Z,X,Y,Player,W], 5):-Z\==Player,X\==Player,Y\==Player,W\==Player.
+
+valuationDistanceLigne(Player, 6, [_,_,_,_,Player,Z,Player], 20):-Z\==Player.
+valuationDistanceLigne(Player, 6, [_,_,_,Player,Z,X,Player], 10):-Z\==Player,X\==Player.
+valuationDistanceLigne(Player, 6, [_,_,Player,Z,X,Y,Player], 5):-Z\==Player,X\==Player,Y\==Player.
+
+valuationDistanceLigne(Player, M, L, [X0,X1,X2,X3,X4,X5,X6|_],L, V):-
+    valuationDistanceLigne(Player, M, [X0,X1,X2,X3,X4,X5,X6], V).
+
+valuationDistanceLigne(Player, M, L, [_,_,_,_,_,_,_|Board],N, V):-N1 is N+1, L\==N,
+    valuationDistanceLigne(Player, M, L, Board, N1, V).
+
+
+valuationDistanceColonne(Player,0,[_,_,_,Player,Z,Player],20):-Z\==Player.
+valuationDistanceColonne(Player,0,[_,_,Player,X,Z,Player],10):-Z\==Player,X\==Player.
+valuationDistanceColonne(Player,0,[_,Player,Y,X,Z,Player],5):-Z\==Player,X\==Player,Y\==Player.
+
+valuationDistanceColonne(Player,1,[_,_,Player,Z,Player,_],20):-Z\==Player.
+valuationDistanceColonne(Player,1,[_,Player,X,Z,Player,_],10):-Z\==Player,X\==Player.
+valuationDistanceColonne(Player,1,[Player,Y,X,Z,Player,_],5):-Z\==Player,X\==Player,Y\==Player.
+
+valuationDistanceColonne(Player,2,[_,Player,Z,Player,_,_],20):-Z\==Player.
+valuationDistanceColonne(Player,2,[Player,X,Z,Player,_,_],10):-Z\==Player,X\==Player.
+
+valuationDistanceColonne(Player,3,[Player,Z,Player,_,_,_],20):-Z\==Player.
+
+valuationDistanceColonne(Player,0,L,[X5,_,_,_,_,_,_,
+                                     X4,_,_,_,_,_,_,
+                                     X3,_,_,_,_,_,_,
+                                     X2,_,_,_,_,_,_,
+                                     X1,_,_,_,_,_,_,
+                                     X0,_,_,_,_,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
+
+valuationDistanceColonne(Player,1,L,[_,X5,_,_,_,_,_,
+                                     _,X4,_,_,_,_,_,
+                                     _,X3,_,_,_,_,_,
+                                     _,X2,_,_,_,_,_,
+                                     _,X1,_,_,_,_,_,
+                                     _,X0,_,_,_,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
+
+valuationDistanceColonne(Player,2,L,[_,_,X5,_,_,_,_,
+                                     _,_,X4,_,_,_,_,
+                                     _,_,X3,_,_,_,_,
+                                     _,_,X2,_,_,_,_,
+                                     _,_,X1,_,_,_,_,
+                                     _,_,X0,_,_,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
+
+valuationDistanceColonne(Player,3,L,[_,_,_,X5,_,_,_,
+                                     _,_,_,X4,_,_,_,
+                                     _,_,_,X3,_,_,_,
+                                     _,_,_,X2,_,_,_,
+                                     _,_,_,X1,_,_,_,
+                                     _,_,_,X0,_,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
+
+valuationDistanceColonne(Player,4,L,[_,_,_,_,X5,_,_,
+                                     _,_,_,_,X4,_,_,
+                                     _,_,_,_,X3,_,_,
+                                     _,_,_,_,X2,_,_,
+                                     _,_,_,_,X1,_,_,
+                                     _,_,_,_,X0,_,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
+
+valuationDistanceColonne(Player,5,L,[_,_,_,_,_,X5,_,
+                                     _,_,_,_,_,X4,_,
+                                     _,_,_,_,_,X3,_,
+                                     _,_,_,_,_,X2,_,
+                                     _,_,_,_,_,X1,_,
+                                     _,_,_,_,_,X0,_],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
+
+valuationDistanceColonne(Player,6,L,[_,_,_,_,_,_,X5,
+                                     _,_,_,_,_,_,X4,
+                                     _,_,_,_,_,_,X3,
+                                     _,_,_,_,_,_,X2,
+                                     _,_,_,_,_,_,X1,
+                                     _,_,_,_,_,_,X0],V):-valuationDistanceColonne(Player,L,[X0,X1,X2,X3,X4,X5],V).
 
 
 %minimax(0,Board, Flag,Move,Value):-
