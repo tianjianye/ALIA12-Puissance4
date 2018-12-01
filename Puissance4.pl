@@ -9,28 +9,34 @@ construireDroite(M,M2,[X|L],LD):-M2>M,M3 is M2+1, construireDroite(M,M3,L,LD2), 
 construireDroite(M,M2,[_|L],LD):-M2=<M,M3 is M2+1,construireDroite(M,M3,L,LD).
 separerLigne(M, L, LG, LD):-construireGauche(M,0,L,LG),construireDroite(M,0,L,LD).
 
-evaluer(_,[],1).
-evaluer(_,[X|_],1):-var(X).
-evaluer(Player,[X|_],1):-not(var(X)),X\==Player.
-evaluer(Player,[X|L],V):-not(var(X)),X==Player, evaluer(Player,L,V2), V is V2*10.
+%evaluer(_,[],1).
+%evaluer(_,[X|_],1):-var(X).
+%evaluer(Player,[X|_],1):-not(var(X)),X\==Player.
+%evaluer(Player,[X|L],V):-not(var(X)),X==Player, evaluer(Player,L,V2), V is V2*10.
+valeurDeV(L,V):-length(L,P),P\==0,V is 10**P.
+valeurDeV([],0).
+evaluer(Player,L,V):-findall(I,(nth0(I,L,K),I<3,not(var(K)),K==Player),Indexes),valeurDeV(Indexes,V).
 
 evaluerLigne(_,_,[],0).
 evaluerLigne(Player,M,L,V):-separerLigne(M,L,LG,LD), reverse(LG,GL), evaluer(Player,GL,V2),evaluer(Player,LD,V3), V is V2*V3.
-  
-positionHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6|_],V):-L=[X0,X1,X2,X3,X4,X5,X6],nth0(M,L,Val), not(var(Val)),Val==Player,evaluerLigne(Player,M,L,V).
-positionHorizontale(Player, M, [_,_,_,_,_,_,_|Board],V):-positionHorizontale(Player, M, Board,V).
 
+positionHorizontale(_,_,[],0).
+positionHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6|_],V):-L=[X0,X1,X2,X3,X4,X5,X6],nth0(M,L,Val), Val==Player,not(var(Val)),evaluerLigne(Player,M,L,V).
+positionHorizontale(Player, M, [X0,X1,X2,X3,X4,X5,X6|Board],V):-L=[X0,X1,X2,X3,X4,X5,X6],nth0(M,L,Val),Val\==Player,positionHorizontale(Player, M, Board,V).
+%length(Board,42),nth0(28,Board,x),nth0(35,Board,x),trace,positionHorizontale(x,Move,Board,V).
 % Test positionHorizontale
 %length(Board,35),nth0(28,Board,x),nth0(29,Board,x),nth0(30,Board,x),nth0(31,Board,x),trace,positionHorizontale(x,M,Board,V).
   
 %-----------------------------------------------colonnes
 
 construireVerticale(_,[],[]).
-construireVerticale(M,[X0,X1,X2,X3,X4,X5,X6|Board],C):-nth0(M,[X0,X1,X2,X3,X4,X5,X6],Val), not(var(Val)),construireVerticale(M,Board,C2), append([Val],C2,C).
-construireVerticale(M, [X0,X1,X2,X3,X4,X5,X6|Board],C):-nth0(M,[X0,X1,X2,X3,X4,X5,X6],Val),var(Val),construireVerticale(M,Board,C).
-evaluerVerticale(Player,[X|_],0):-X\==Player.
-evaluerVerticale(Player,[X|C],V):-X==Player,evaluer(Player,C,V).
+construireVerticale(M,[X0,X1,X2,X3,X4,X5,X6|Board],C):-nth0(M,[X0,X1,X2,X3,X4,X5,X6],Val),construireVerticale(M,Board,C2), append([Val],C2,C).
+evaluerVerticale(Player,[X|_],0):-not(var(X)),X\==Player.
+evaluerVerticale(Player,[X|C],V):-not(var(X)),X==Player,evaluer(Player,C,V).
+evaluerVerticale(Player,[X|C],V):-var(X),evaluerVerticale(Player,C,V).
+positionVerticale(_,M,Board,0):-hauteurJeton(M,Board,6).
 positionVerticale(Player,M,Board,V):-construireVerticale(M,Board,Verticale),evaluerVerticale(Player,Verticale,V).
+
 %Test vertical
 %length(Board,35),nth0(0,Board,x),nth0(7,Board,x),nth0(14,Board,x),nth0(21,Board,o),nth0(28,Board,x),trace,positionVerticale(x,M,Board,V).
 
@@ -53,10 +59,6 @@ construireDiagonaleD(H,[X0,X1,X2,X3,X4,X5,X6|Board],Diag):-nth0(H,[X0,X1,X2,X3,X
 hauteurJeton(_,[],0).
 hauteurJeton(M,[X0,X1,X2,X3,X4,X5,X6|_],0):-nth0(M,[X0,X1,X2,X3,X4,X5,X6],Val),not(var(Val)).
 hauteurJeton(M,[X0,X1,X2,X3,X4,X5,X6|Board],H):-nth0(M,[X0,X1,X2,X3,X4,X5,X6|Board],Val),var(Val),hauteurJeton(M,Board,H2),H is H2+1.
-
-min([X],X).
-min([X|L],M):-min(L,M2),M2=<X, M is M2.
-min([X|L],M):-min(L,M2),X<M2, M is X.
 
 indexDiagG(M,H,IC):-IC is M+H.
 indexDiagD(M,H,IC):-IC is M-H.
@@ -86,6 +88,7 @@ evaluerDistance(_,_,[],0).
 evaluerDistance(Player,D,[X|L],V):-not(var(X)),X==Player,D2 is D+1,evaluerDistance(Player,D2,L,V2),valeurDistance(D,V3), V is V2+V3.
 evaluerDistance(Player,D,[X|L],V):-(   var(X);not(var(X)),X\==Player),D2 is D+1, evaluerDistance(Player,D2,L,V).
 %Test distance : length(A,7),nth0(0,A,x),nth0(1,A,x),nth0(2,A,x),nth0(3,A,x),nth0(4,A,x),nth0(5,A,x),nth0(6,A,x),trace,evaluerDistance(x,0,A,V).
+evaluerDistanceLigne(_,_,[],0).
 evaluerDistanceLigne(Player,M,L,V):-separerLigne(M,L,LG,LD),reverse(LG,GL),evaluerDistance(Player,1,GL,VG),evaluerDistance(Player,1,LD,VD), V is VG +VD.
 
 distanceHorizontale(Player,M,[X0,X1,X2,X3,X4,X5,X6|_],V):-L=[X0,X1,X2,X3,X4,X5,X6],nth0(M,L,Val),not(var(Val)),evaluerDistanceLigne(Player,M,L,V).
@@ -105,31 +108,41 @@ distanceDiagonale(Player,M,Board,V):-evaluerDistanceDiagonaleG(Player,M,Board,VG
 getPlayer(1,'o').
 getPlayer(-1,'x').
 
-value(Board, Move, 1, V):-Player='o',
-    positionHorizontale(Player,Move,Board,V1),positionVerticale(Player,M,Board,V2),positionDiagonale(Player,M,Board,V3),
+value(Board, Move, o, V):-Player='o',
+    positionHorizontale(Player,Move,Board,V1),positionVerticale(Player,Move,Board,V2),positionDiagonale(Player,Move,Board,V3),
    distanceHorizontale(Player,Move,Board,V4),distanceVerticale(Player,Move,Board,V5),distanceDiagonale(Player,Move,Board,V6),
     V is V1+V2+V3+V4+V5+V6.
     
-value(Board, Move, -1, V):-Player='x',
-    positionHorizontale(Player,Move,Board,V1),positionVerticale(Player,M,Board,V2),positionDiagonale(Player,M,Board,V3),
-    V is V1+V2+V3.
+value(Board, Move, x, V):-Player='x',
+   positionHorizontale(Player,Move,Board,V1),positionVerticale(Player,Move,Board,V2),positionDiagonale(Player,Move,Board,V3),
+    V is (V1+V2+V3)/2.
+sommeListe([X],X).
+sommeListe([X|L],V):-sommeListe(L,V2), V is V2+X.
 
-value(_,_,_,10).
+value(Board,V):-
+    findall(V,(member(Move,[0,1,2,3,4,5,6]),value(Board,Move,o,V)),Values1),
+    sommeListe(Values1,Vo),
+    findall(V,(member(Move,[0,1,2,3,4,5,6]),value(Board,Move,x,V)),Values2),
+    sommeListe(Values2,Vx),
+    V is Vo+Vx.
+
 minimax(0,Board, Flag,Move,Value):-
-    value(Board,Move,Flag,Value).
+    value(Board,Value).
 minimax(Depth, Board, Flag, Move, Value):-
     Depth>0,
     playMove(Moves, Board), %define move
     DepthRecur is Depth-1,
     OtherFlag is -1*Flag,
-    evaluateAndChoose(Moves, Board, DepthRecur, OtherFlag, (nil, -1000), (Move,Value)).
+    evaluateAndChoose(Moves, Board, DepthRecur, OtherFlag, (nil, -10000), (Move,Value)).
 
 
 evaluateAndChoose([],_,_,_,Record,Record).
 evaluateAndChoose([Move|Moves], Board, Depth,Flag, Record, BestMoves):-
     getPlayer(Flag,Player),
     playMove(Board,Move, NewBoard,Player),
-    minimax(Depth, NewBoard, Flag, _,Value),%MoveX is useless, we don't need to know what to do afterwards
+    minimax(Depth, NewBoard, Flag, _,Value1),%MoveX is useless, we don't need to know what to do afterwards
+    Value is Value1*Flag,
+    %write("Profondeur : "),write(Player), write(" valeur : "), write(Value), write("("),write(Move),writeln(")"),
     update(Move,Value,Record,Record1),
     evaluateAndChoose(Moves,Board,Depth,Flag,Record1,BestMoves).
 
@@ -144,7 +157,7 @@ gameOver(x):-win(x).
 gameOver("Draw"):-board(Board),playMove([],Board).
 
 
-play(_):-gameOver(Winner),!,displayBoard,writeln("Vous êtes nuls."),writeln(Winner).
+play(_):-gameOver(Winner),!,displayBoard,writeln("Fin de la partie, victoire : "),writeln(Winner).
 %play(Player):-changePlayer(Player,NextPlayer),gameOver(NextPlayer),!,displayBoard,write('Victoire de '), write(NextPlayer), writeln(' !'),!.
 play(Player):- write('New turn for:'), writeln(Player),
         board(Board), % instanciate the board from the knowledge base
@@ -154,14 +167,15 @@ play(Player):- write('New turn for:'), writeln(Player),
             applyIt(Board, NewBoard), % Remove the old board from the KB and store the new one
         changePlayer(Player,NextPlayer), % Change the player before next turn
             play(NextPlayer). % next turn
+
+
 %Pour tester, on joue x et o :
 chooseMove(_, Move, x) :-writeln("Entrez l'indice de la colonne dans laquelle vous souhaitez jouer :"),read(M2), Move is M2-1.
 %chooseMove(_, Move, Player) :-writeln("Entrez l'indice de la colonne dans laquelle vous souhaitez jouer :"),read(M2), Move is M2-1.
 %% Ligne au dessus à commenter/dé-commenter
-
-
+%
 %chooseMove(Board,Move,o).%:-repeat, Move is random(6), nth0(Move, Board, Elem), var(Elem), !.
-chooseMove(Board,Move,o):-playMove(Moves,Board),evaluateAndChoose(Moves, Board, 3, 1,(nil,-1000),(Move,_)).
+chooseMove(Board,Move,o):-playMove(Moves,Board),evaluateAndChoose(Moves, Board, 3, 1,(nil,-10000),(Move,Val)).
 
 positionInBoard(_,[],Move,Move).
 positionInBoard(_,Board,Move,Move) :-nth0(Move,Board,Val),not(var(Val)),not(nth0(Move,Board,?)),!.
@@ -188,7 +202,7 @@ changePlayer('o','x').
 
 %%%% Print the value of the board at index N:
 % if its a variable, print ? and x or o otherwise.
-printVal(N) :- board(B), nth0(N,B,Val), var(Val), write('?'), !.
+printVal(N) :- board(B), nth0(N,B,Val), var(Val), write('•'), !.
 printVal(N) :- board(B), nth0(N,B,Val), write(Val).
 
 %%%% Display the board
