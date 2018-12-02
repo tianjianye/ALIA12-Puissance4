@@ -6,7 +6,8 @@ valeurDeV(L,V):-length(L,P),P\==0,V is 10**P.
 valeurDeV([],0).
 evaluer(Player,L,V):-findall(I,(nth0(I,L,K),I<3,not(var(K)),K==Player),Indexes),valeurDeV(Indexes,V).
 evaluerLigne(_,_,[],0).
-evaluerLigne(Player,M,L,V):-separerLigne(M,L,LG,LD), reverse(LG,GL), evaluer(Player,GL,V2),evaluer(Player,LD,V3), V is V2*V3.
+evaluerLigne(Player,M,L,0):-not(nth0(M,L,Player)).
+evaluerLigne(Player,M,L,V):-nth0(M,L,Player),separerLigne(M,L,LG,LD), reverse(LG,GL), evaluer(Player,GL,V2),evaluer(Player,LD,V3), V is V2*V3.
 construireGauche(M,M,_,[]).
 construireGauche(M,M2,[X|L],LG):- M3 is M2+1,construireGauche(M,M3,L,LG2),append([X],LG2,LG).
 construireDroite(_,_,[],[]).
