@@ -131,8 +131,13 @@ distanceDiagonale(Player,M,Board,V):-evaluerDistanceDiagonaleG(Player,M,Board,VG
 
 %blocageDiagonale(Player,M,Board,V):-evaluerBlocageDiagonaleG(Player,M,Board,VG),evaluerBlocageDiagonaleD(Player,M,Board,VD),V is VG+VD.
 %test
-%length(Board,42),nth0(3,Board,x),nth0(7,Board,x),nth0(9,Board,x),nth0(15,Board,x),nth0(21,Board,o),nth0(23,Board,o),nth0(31,Board,x),nth0(39,Board,x),blocageDiagonale(x,1,Board,V).
-
+%length(Board,42),nth0(3,Board,x),nth0(5,Board,x),nth0(7,Board,x),nth0(9,Board,o),nth0(11,Board,o),nth0(15,Board,x),nth0(17,Board,o),nth0(19,Board,o),nth0(21,Board,x),nth0(23,Board,o),nth0(27,Board,x),nth0(29,Board,x),nth0(31,Board,x),nth0(39,Board,x),blocageDiagonale(x,0,Board,V).%V=0
+%length(Board,42),nth0(3,Board,x),nth0(5,Board,x),nth0(7,Board,x),nth0(9,Board,o),nth0(11,Board,o),nth0(15,Board,x),nth0(17,Board,o),nth0(19,Board,o),nth0(21,Board,x),nth0(23,Board,o),nth0(27,Board,x),nth0(29,Board,x),nth0(31,Board,x),nth0(39,Board,x),blocageDiagonale(x,1,Board,V).%V=10
+%length(Board,42),nth0(3,Board,x),nth0(5,Board,x),nth0(7,Board,x),nth0(9,Board,o),nth0(11,Board,o),nth0(15,Board,x),nth0(17,Board,o),nth0(19,Board,o),nth0(21,Board,x),nth0(23,Board,o),nth0(27,Board,x),nth0(29,Board,x),nth0(31,Board,x),nth0(39,Board,x),blocageDiagonale(o,2,Board,V).%V=55
+%length(Board,42),nth0(3,Board,x),nth0(5,Board,x),nth0(7,Board,x),nth0(9,Board,o),nth0(11,Board,o),nth0(15,Board,x),nth0(17,Board,o),nth0(19,Board,o),nth0(21,Board,x),nth0(23,Board,o),nth0(27,Board,x),nth0(29,Board,x),nth0(31,Board,x),nth0(39,Board,x),blocageDiagonale(x,3,Board,V).%V=55
+%length(Board,42),nth0(3,Board,x),nth0(5,Board,x),nth0(7,Board,x),nth0(9,Board,o),nth0(11,Board,o),nth0(15,Board,x),nth0(17,Board,o),nth0(19,Board,o),nth0(21,Board,x),nth0(23,Board,o),nth0(27,Board,x),nth0(29,Board,x),nth0(31,Board,x),nth0(39,Board,x),blocageDiagonale(o,4,Board,V).%V=10
+%length(Board,42),nth0(3,Board,x),nth0(5,Board,x),nth0(7,Board,x),nth0(9,Board,o),nth0(11,Board,o),nth0(15,Board,x),nth0(17,Board,o),nth0(19,Board,o),nth0(21,Board,x),nth0(23,Board,o),nth0(27,Board,x),nth0(29,Board,x),nth0(31,Board,x),nth0(39,Board,x),blocageDiagonale(x,5,Board,V).%V=500
+%length(Board,42),nth0(3,Board,x),nth0(5,Board,x),nth0(7,Board,x),nth0(9,Board,o),nth0(11,Board,o),nth0(15,Board,x),nth0(17,Board,o),nth0(19,Board,o),nth0(21,Board,x),nth0(23,Board,o),nth0(27,Board,x),nth0(29,Board,x),nth0(31,Board,x),nth0(39,Board,x),blocageDiagonale(x,6,Board,V).%V=50
 %--------------------------------------Algorithme min max
 
 getPlayer(1,'o'). % Identification du joueur selon le flag minmax/maxmin
